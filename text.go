@@ -1,40 +1,38 @@
 package tableimage
 
 import (
-	"fmt"
-	"image/color"
+	"os"
 	"strings"
+
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
+	"golang.org/x/image/font/sfnt"
 )
 
-func parseHexColor(x string) (r, g, b, a int) {
+func initFontFace(path string, fontSize float64) (font.Face, error) {
+	fontBytes, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
 
-	x = strings.TrimPrefix(x, "#")
-	a = 255
-	if len(x) == 3 {
-		format := "%1x%1x%1x"
-		fmt.Sscanf(x, format, &r, &g, &b)
-		r |= r << 4
-		g |= g << 4
-		b |= b << 4
+	ttf, err := sfnt.Parse(fontBytes)
+	if err != nil {
+		return nil, err
 	}
-	if len(x) == 6 {
-		format := "%02x%02x%02x"
-		fmt.Sscanf(x, format, &r, &g, &b)
-	}
-	if len(x) == 8 {
-		format := "%02x%02x%02x%02x"
-		fmt.Sscanf(x, format, &r, &g, &b, &a)
-	}
-	return
-}
 
-func getColorByHex(hexColor string) color.RGBA {
-	r, g, b, a := parseHexColor(hexColor)
-	return color.RGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
+	face, err := opentype.NewFace(ttf, &opentype.FaceOptions{
+		Size:    fontSize,
+		DPI:     72,
+		Hinting: font.HintingFull,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return face, nil
 }
 
 func wrapText(input string) []string {
-
 	var wrapped []string
 
 	// Split string into array of words
@@ -48,7 +46,6 @@ func wrapText(input string) []string {
 	var lineText string
 
 	for i, word := range words {
-
 		if len(lineText)+len(word)+1 >= wrapWordsLen {
 			wrapped = append(wrapped, lineText)
 			lineText = word
@@ -58,15 +55,12 @@ func wrapText(input string) []string {
 			} else {
 				lineText += " " + word
 			}
-			//if it is the last word
+			// if it is the last word
 			if i == wordsLength-1 {
 				wrapped = append(wrapped, lineText)
 			}
-
 		}
-
 	}
 
 	return wrapped
-
 }

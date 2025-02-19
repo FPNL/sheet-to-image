@@ -1,5 +1,15 @@
 module tableimage
 
-go 1.12
+go 1.24
 
-require golang.org/x/image v0.0.0-20190802002840-cff245a6509b
+require (
+	github.com/stretchr/testify v1.10.0
+	golang.org/x/image v0.24.0
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)

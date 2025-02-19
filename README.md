@@ -1,3 +1,5 @@
+# This is for from https://github.com/Techbinator/go-table-image
+
 # go lang table image
 
 Generates a table inside of a image (png or jpg format) based on the provided data
@@ -23,27 +25,46 @@ Generates a table inside of a image (png or jpg format) based on the provided da
 package main
 
 import (
+	"image/color"
+
 	"tableimage"
 )
 
 func main() {
-	ti := tableimage.Init("#fff", tableimage.PNG, "./test.png")
+	dimBlack, err := tableimage.GetColorByHex("#171717")
+	red, err := tableimage.GetColorByHex("#d03136")
+	blue, err := tableimage.GetColorByHex("#0075e2")
+	green, err := tableimage.GetColorByHex("#00d841")
+	if err != nil {
+		panic(err)
+	}
+	
+	ti, err := tableimage.Init(dimBlack, "MicrosoftYahei.ttf")
+	if err != nil {
+		panic(err)
+	}
 
 	ti.AddTH(
 		tableimage.TR{
-			BorderColor: "#000",
 			Tds: []tableimage.TD{
-				tableimage.TD{
-					Color: "#000",
-					Text:  "Id",
+				{
+					Text: tableimage.Text{"That", color.White},
 				},
-				tableimage.TD{
-					Color: "#000",
-					Text:  "Name",
+				{
+					Text: tableimage.Text{"Hello", red},
+					// BackgroundColor: purple,
 				},
-				tableimage.TD{
-					Color: "#008000",
-					Text:  "Price",
+				{
+					Text: tableimage.Text{"Beach", blue},
+				},
+				{
+					Text: tableimage.Text{"Peach", green},
+				},
+				{
+					Text: tableimage.Text{"hello", red},
+				},
+				{
+					Text: tableimage.Text{"leisure", blue},
 				},
 			},
 		},
@@ -51,60 +72,57 @@ func main() {
 
 	ti.AddTRs(
 		[]tableimage.TR{
-			tableimage.TR{
-				BorderColor: "#000",
+			{
+				BackgroundColor: color.White,
 				Tds: []tableimage.TD{
-					tableimage.TD{
-						Color: "#000",
-						Text:  "2223",
+					{
+						Text: tableimage.Text{S: "2223"},
 					},
-					tableimage.TD{
-						Color: "#000",
-						Text:  "Really cool product on two lines",
+					{
+						Text: tableimage.Text{S: "Really cool product on two lines"},
 					},
-					tableimage.TD{
-						Color: "#0000ff",
-						Text:  "2000$",
+					{},
+					{
+						Text: tableimage.Text{S: "2000$"},
 					},
 				},
 			},
-			tableimage.TR{
-				BorderColor: "#000",
+			{
+				// BackgroundColor: purple,
 				Tds: []tableimage.TD{
-					tableimage.TD{
-						Color: "#000",
-						Text:  "11",
+					{},
+					{
+						Text: tableimage.Text{S: "11"},
 					},
-					tableimage.TD{
-						Color: "#000",
-						Text:  "A more cooler product this time on 3 lines",
+					{
+						Text: tableimage.Text{S: "A more cooler product this time on 3 lines"},
 					},
-					tableimage.TD{
-						Color: "#0000ff",
-						Text:  "200$",
+					{
+						Text: tableimage.Text{S: "200$"},
 					},
 				},
 			},
-			tableimage.TR{
-				BorderColor: "#000",
+			{
+				BackgroundColor: color.White,
 				Tds: []tableimage.TD{
-					tableimage.TD{
-						Color: "#000",
-						Text:  "2231",
+					{
+						Text: tableimage.Text{S: "2231"},
 					},
-					tableimage.TD{
-						Color: "#000",
-						Text:  "Lenovo",
+					{
+						Text: tableimage.Text{S: "Lenovo"},
 					},
-					tableimage.TD{
-						Color: "#000",
-						Text:  "20400$",
+					{
+						Text: tableimage.Text{S: "20400$"},
 					},
 				},
 			},
 		},
 	)
-	ti.Save()
+
+	err = ti.Save(tableimage.PNG, "./test.png")
+	if err != nil {
+		panic(err)
+	}
 }
 ```
 
