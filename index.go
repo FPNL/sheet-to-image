@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"io"
 
 	"golang.org/x/image/font"
 )
@@ -40,11 +41,10 @@ type tableImage struct {
 }
 
 const (
-	letterPerPx           = 10
-	wrapWordsLen          = 20
-	height                = 26
-	width                 = wrapWordsLen * letterPerPx
-	fontSize              = 12
+	fontSize              = 14
+	wrapWordsLen          = 12 * fontSize
+	height                = 28
+	width                 = 16 + wrapWordsLen
 	PNG          FileType = "png"
 	JPEG         FileType = "jpg"
 )
@@ -74,24 +74,19 @@ func (ti *tableImage) AddTRs(trs []TR) {
 	ti.trs = trs
 }
 
-// Save saves the table
-func (ti *tableImage) Save(fileType FileType, filePath string) error {
+// Write saves the table
+func (ti *tableImage) Write(fileType FileType, w io.Writer) error {
 	ti.calculateHeight()
 	ti.calculateWidth()
-
 	ti.setRgba()
 
-	if err := ti.drawTH(); err != nil {
-		return fmt.Errorf("drawTH: %w", err)
-	}
+	ti.drawTH()
 
-	if err := ti.drawTR(); err != nil {
-		return fmt.Errorf("drawTR: %w", err)
-	}
+	ti.drawTR()
 
-	err := ti.saveFile(fileType, filePath)
+	err := ti.write(fileType, w)
 	if err != nil {
-		return fmt.Errorf("saveFile: %w", err)
+		return fmt.Errorf("write: %w", err)
 	}
 
 	return nil

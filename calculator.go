@@ -14,8 +14,10 @@ func maxRows(tr TR) int {
 }
 
 func (ti *tableImage) calculateHeight() {
-	// start from 1 since we have th
-	totalRowNo := 1
+	var totalRowNo int
+
+	totalRowNo += maxRows(ti.th)
+
 	for _, tr := range ti.trs {
 		totalRowNo += maxRows(tr)
 	}

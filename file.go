@@ -4,23 +4,17 @@ import (
 	"fmt"
 	"image/jpeg"
 	"image/png"
-	"os"
+	"io"
 )
 
-func (ti *tableImage) saveFile(fileType FileType, filePath string) error {
-	f, err := os.Create(filePath)
-	if err != nil {
-		return fmt.Errorf("os.Create: %w", err)
-	}
-	defer f.Close()
-
+func (ti *tableImage) write(fileType FileType, w io.Writer) error {
 	switch fileType {
 	case JPEG, "jpeg":
-		if err = jpeg.Encode(f, ti.img, nil); err != nil {
+		if err := jpeg.Encode(w, ti.img, nil); err != nil {
 			return fmt.Errorf("jpeg.Encode: %w", err)
 		}
 	case PNG:
-		if err = png.Encode(f, ti.img); err != nil {
+		if err := png.Encode(w, ti.img); err != nil {
 			return fmt.Errorf("png.Encode: %w", err)
 		}
 	default:

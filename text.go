@@ -35,30 +35,19 @@ func initFontFace(path string, fontSize float64) (font.Face, error) {
 func wrapText(input string) []string {
 	var wrapped []string
 
-	// Split string into array of words
-	words := strings.Fields(input)
-	wordsLength := len(words)
+	maxLetterPerLine := wrapWordsLen/fontSize + 1
 
-	if wordsLength == 0 {
-		return wrapped
-	}
+	for _, word := range strings.Split(input, "\n") {
+		runes := []rune(word)
 
-	var lineText string
+		for i, j := 0, len(runes); i < j; i += maxLetterPerLine {
+			end := i + maxLetterPerLine
 
-	for i, word := range words {
-		if len(lineText)+len(word)+1 >= wrapWordsLen {
-			wrapped = append(wrapped, lineText)
-			lineText = word
-		} else {
-			if lineText == "" {
-				lineText += word
-			} else {
-				lineText += " " + word
+			if end > j {
+				end = j
 			}
-			// if it is the last word
-			if i == wordsLength-1 {
-				wrapped = append(wrapped, lineText)
-			}
+
+			wrapped = append(wrapped, string(runes[i:end]))
 		}
 	}
 

@@ -24,7 +24,7 @@ func addString(img draw.Image, fontFace font.Face, point image.Point, text []str
 			Face: fontFace,
 			Dot: fixed.Point26_6{
 				X: fixed.Int26_6(x * 64),
-				Y: fixed.Int26_6(((i + 1) * y) * 64),
+				Y: fixed.Int26_6(((i * fontSize) + y) * 64),
 			},
 		}
 
@@ -208,7 +208,7 @@ func addColumn(img draw.Image, rectangle image.Rectangle, text []string, fontFac
 			maxString = s
 		}
 	}
-
+	// y := 0 // (len(text)) * -fontSize / 2
 	// 字串要從哪個點開始繪製，會往右下繪製
 	stringDot := rectangle.Max.
 		Add(rectangle.Min).
@@ -241,26 +241,37 @@ func (ti *tableImage) addColumn(rectangle image.Rectangle, text Text, bgColor, b
 	)
 }
 
-func (ti *tableImage) drawTH() (err error) {
+var totalRowHeight = height
+
+func (ti *tableImage) drawTH() {
+	maxRowHeight := height
+	totalRowHeight = maxRowHeight
+
+DrawTHRow:
 	for colNo, td := range ti.th.Tds {
 		bgColor := ti.th.BackgroundColor
 		if td.BackgroundColor != nil {
 			bgColor = td.BackgroundColor
 		}
 
+		currRowHeight := len(wrapText(td.Text.S)) * height
+
+		if maxRowHeight < currRowHeight {
+			maxRowHeight = currRowHeight
+			totalRowHeight = maxRowHeight
+			goto DrawTHRow
+		}
+
 		ti.addColumn(
-			image.Rect(colNo*width, 0, (colNo+1)*width, height),
+			image.Rect(colNo*width, 0, (colNo+1)*width, maxRowHeight),
 			td.Text,
 			bgColor,
 			ti.th.BorderColor,
 		)
 	}
-
-	return nil
 }
 
-func (ti *tableImage) drawTR() (err error) {
-	totalRowHeight := height
+func (ti *tableImage) drawTR() {
 
 	for _, tds := range ti.trs {
 		// start with a row space
@@ -311,8 +322,5 @@ func (ti *tableImage) drawTR() (err error) {
 		}
 
 		totalRowHeight += maxRowHeight
-
 	}
-
-	return nil
 }

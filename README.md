@@ -128,4 +128,4 @@ func main() {
 
 Outputs:
 
-![Example](example/test.png "Example")
+![Example](test.png "Example")
