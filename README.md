@@ -26,7 +26,7 @@ package main
 
 import (
 	"image/color"
-
+    "os"
 	"tableimage"
 )
 
@@ -119,7 +119,13 @@ func main() {
 		},
 	)
 
-	err = ti.Save(tableimage.PNG, "./test.png")
+	f, err := os.Create("./test.png")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	err = ti.Write(tableimage.PNG, f)
 	if err != nil {
 		panic(err)
 	}
