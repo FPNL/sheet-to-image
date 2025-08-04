@@ -22,11 +22,11 @@ func (ti *tableImage) calculateHeight() {
 		totalRowNo += maxRows(tr)
 	}
 
-	ti.height = totalRowNo * height
+	ti.height = totalRowNo * DefaultConfig.Height()
 }
 
 func (ti *tableImage) calculateWidth() {
 	totalColumnNo := len(ti.th.Tds)
 
-	ti.width = totalColumnNo * width
+	ti.width = totalColumnNo * DefaultConfig.Width()
 }

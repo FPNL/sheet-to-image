@@ -9,7 +9,8 @@ package main
 
 import (
 	"image/color"
-    "os"
+	"os"
+
 	"tableimage"
 )
 
@@ -21,8 +22,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	
-	ti, err := tableimage.Init(dimBlack, "MicrosoftYahei.ttf")
+
+	ti, err := tableimage.Init(dimBlack, "MicrosoftYahei.ttf", &tableimage.Config{
+		fontSize:     14,
+		hPadding:     0,
+		vPadding:     2,
+		wrapWordsLen: 12,
+	})
 	if err != nil {
 		panic(err)
 	}

@@ -35,7 +35,7 @@ func initFontFace(path string, fontSize float64) (font.Face, error) {
 func wrapText(input string) []string {
 	var wrapped []string
 
-	maxLetterPerLine := wrapWordsLen/fontSize + 1
+	maxLetterPerLine := DefaultConfig.LineLen()/DefaultConfig.fontSize + 1
 
 	for _, word := range strings.Split(input, "\n") {
 		runes := []rune(word)

@@ -24,7 +24,7 @@ func addString(img draw.Image, fontFace font.Face, point image.Point, text []str
 			Face: fontFace,
 			Dot: fixed.Point26_6{
 				X: fixed.Int26_6(x * 64),
-				Y: fixed.Int26_6(((i * fontSize) + y) * 64),
+				Y: fixed.Int26_6(((i * DefaultConfig.fontSize) + y) * 64),
 			},
 		}
 
@@ -213,9 +213,9 @@ func addColumn(img draw.Image, rectangle image.Rectangle, text []string, fontFac
 	stringDot := rectangle.Max.
 		Add(rectangle.Min).
 		Div(2). // 代表兩個點的中心點
-		Sub(image.Point{
-			X: font.MeasureString(fontFace, maxString).Ceil() / 2,
-			Y: -fontSize / 3,
+		Add(image.Point{
+			X: -(font.MeasureString(fontFace, maxString).Ceil() / 2),
+			Y: DefaultConfig.fontSize * (2 - len(text)) / 2,
 		}) // 計算字的長度，把它置中
 
 	addSurface(img, rectangle, bgColor)
@@ -241,10 +241,10 @@ func (ti *tableImage) addColumn(rectangle image.Rectangle, text Text, bgColor, b
 	)
 }
 
-var totalRowHeight = height
+var totalRowHeight = DefaultConfig.Height()
 
 func (ti *tableImage) drawTH() {
-	maxRowHeight := height
+	maxRowHeight := DefaultConfig.Height()
 	totalRowHeight = maxRowHeight
 
 DrawTHRow:
@@ -254,7 +254,7 @@ DrawTHRow:
 			bgColor = td.BackgroundColor
 		}
 
-		currRowHeight := len(wrapText(td.Text.S)) * height
+		currRowHeight := len(wrapText(td.Text.S)) * DefaultConfig.Height()
 
 		if maxRowHeight < currRowHeight {
 			maxRowHeight = currRowHeight
@@ -263,7 +263,7 @@ DrawTHRow:
 		}
 
 		ti.addColumn(
-			image.Rect(colNo*width, 0, (colNo+1)*width, maxRowHeight),
+			image.Rect(colNo*DefaultConfig.Width(), 0, (colNo+1)*DefaultConfig.Width(), maxRowHeight),
 			td.Text,
 			bgColor,
 			ti.th.BorderColor,
@@ -272,23 +272,22 @@ DrawTHRow:
 }
 
 func (ti *tableImage) drawTR() {
-
 	for _, tds := range ti.trs {
 		// start with a row space
-		maxRowHeight := height
+		maxRowHeight := DefaultConfig.Height()
 
 	DrawRow:
 		for i, td := range tds.Tds {
-			currRowHeight := len(wrapText(td.Text.S)) * height
+			currRowHeight := len(wrapText(td.Text.S)) * DefaultConfig.Height()
 
 			if maxRowHeight < currRowHeight {
 				maxRowHeight = currRowHeight
 				goto DrawRow
 			}
 
-			x0 := i * width
+			x0 := i * DefaultConfig.Width()
 			y0 := totalRowHeight
-			x1 := (i + 1) * width
+			x1 := (i + 1) * DefaultConfig.Width()
 			y1 := maxRowHeight + totalRowHeight
 
 			var bgColor = td.BackgroundColor
@@ -307,9 +306,9 @@ func (ti *tableImage) drawTR() {
 		// if the row has less than columns than the header
 		if len(ti.th.Tds) > len(tds.Tds) {
 			for a, b := len(tds.Tds), len(ti.th.Tds); a <= b; a++ {
-				x0 := a * width
+				x0 := a * DefaultConfig.Width()
 				y0 := totalRowHeight
-				x1 := (a + 1) * width
+				x1 := (a + 1) * DefaultConfig.Width()
 				y1 := maxRowHeight + totalRowHeight
 
 				ti.addColumn(

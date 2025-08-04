@@ -41,17 +41,17 @@ type tableImage struct {
 }
 
 const (
-	fontSize              = 14
-	wrapWordsLen          = 12 * fontSize
-	height                = 28
-	width                 = 16 + wrapWordsLen
-	PNG          FileType = "png"
-	JPEG         FileType = "jpg"
+	PNG  FileType = "png"
+	JPEG FileType = "jpg"
 )
 
 // Init initialise the table image receiver
-func Init(backgroundColor color.Color, fontPath string) (tableImage, error) {
-	face, err := initFontFace(fontPath, fontSize)
+func Init(backgroundColor color.Color, fontPath string, config *Config) (tableImage, error) {
+	if config != nil {
+		DefaultConfig = *config
+	}
+
+	face, err := initFontFace(fontPath, float64(DefaultConfig.fontSize))
 	if err != nil {
 		return tableImage{}, err
 	}
